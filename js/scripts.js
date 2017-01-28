@@ -4,43 +4,48 @@ var onePlayer = false;
 var gamesArray = [];
 var similarArrays = [];
 
+//Game constructor
 function Game(player1, player2, onePlayer, computerPlayer) {
-  this.valueVector = [0,0,0,0,0,0,0,0,0];
-  this.gameState = true;
-  this.playerState = 0;
-  this.playerArray = [];
-  this.playerArray.push(player1, player2, computerPlayer);
-  this.currentPlayer = playerArray[this.playerState]
-  this.winner = "It's a tie";
+  this.valueVector = [0,0,0,0,0,0,0,0,0]; //represents the positions in the game board
+  this.gameState = true; //if true, game is still in sesson- no tie or win yet
+  this.playerState = 0; //determines whose turn it is.
+  this.playerArray = []; // array of players
+  this.playerArray.push(player1, player2, computerPlayer); // adds players to the player array
+  this.currentPlayer = playerArray[this.playerState] //gets index of the current player in the player array
+  this.winner = "It's a tie"; // default text when the game is over
   this.winnerId;
   this.computerPerfomance;
-  this.onePlayer = onePlayer;
+  this.onePlayer = onePlayer; //property to see if one person is playing
 }
 
+// Player constructor
 function Player(playerName, identifier) {
   this.playerName = playerName;
   this.identifier = identifier;
-  playerArray.push(this);
-  this.winsTotal = 0;
-  this.humanPlayer = true;
+  playerArray.push(this); //adds the entire player object into the player array
+  this.winsTotal = 0; //default to 0 wins
+  this.humanPlayer = true; //default to being a human player
 }
 
+//generates a random number for where the computer should play
 Game.prototype.randomNumber = function() {
-  var computerMove = Math.floor(Math.random()*9);
-  while (this.valueVector[computerMove] != 0) {
-    computerMove = Math.floor(Math.random()*9);
+  var computerMove = Math.floor(Math.random()*9); //gets random number between 0 and 8
+  while (this.valueVector[computerMove] != 0) { //while the square (identified by the random number as the index for the valueVector) is not available (??)
+    computerMove = Math.floor(Math.random()*9); //the computer plays there
   }
   return computerMove;
 };
 
+//Set up for one player vs the computer
 Game.prototype.onePlayerSetup = function() {
-  if (this.onePlayer === true) {
-    this.playerArray.splice(1,1);
-  } else {
-    this.playerArray.pop();
+  if (this.onePlayer === true) { //refers to default value in game constructor
+    this.playerArray.splice(1,1); //removes player2 from the array of players
+  } else {                  //done if 2 people are playing
+    this.playerArray.pop(); // removes the computer player from the array of player1,player2,computerplayer
   }
 }
 
+//Switches between one player and the next
 Game.prototype.stateSwitch = function() {
   if (this.playerState === 0) {
     this.playerState = 1;
