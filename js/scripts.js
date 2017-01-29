@@ -48,83 +48,87 @@ Game.prototype.onePlayerSetup = function() {
 //Switches between one player and the next
 Game.prototype.stateSwitch = function() {
   if (this.playerState === 0) {
-    this.playerState = 1;
+    this.playerState = 1; //Player one ends turn
   } else {
-    this.playerState = 0;
+    this.playerState = 0; //Player one gets turn again
   }
 }
 
+//Shows the game board
 Game.prototype.printBoard = function(outputLocation) {
   var topRow = [];
   var midRow = [];
   var bottomRow = [];
   for (var i = 0; i < this.valueVector.length; i++) {
     if (i < 3) {
-      topRow.push(this.valueVector[i]);
+      topRow.push(this.valueVector[i]); // pushes the firsst 3 numbers in the array of game places to top row
     } else if (i < 6) {
-      midRow.push(this.valueVector[i]);
+      midRow.push(this.valueVector[i]); // pushes to middle row
     } else {
-      bottomRow.push(this.valueVector[i]);
+      bottomRow.push(this.valueVector[i]); //pushes to bottom row.
     }
   }
-  $(outputLocation).append(topRow);
+  $(outputLocation).append(topRow); //adds top row to html
   $(outputLocation).append("<br>");
-  $(outputLocation).append(midRow);
+  $(outputLocation).append(midRow); //adds middle row to html
   $(outputLocation).append("<br>");
-  $(outputLocation).append(bottomRow);
+  $(outputLocation).append(bottomRow); //adds bottom row to html
 }
 
+//Checks to see if there is a winner
 Game.prototype.checkWin = function() {
-  var firstElement = this.valueVector[0];
+  var firstElement = this.valueVector[0]; //gets top left corner
   var winIndex;
-  var winner = false;
-  var completeGame = true;
-  for (var index = 0; index < 7; index += 3) {
+  var winner = false; //default to there being no winner
+  var completeGame = true; //default to a game being completed
+  for (var index = 0; index < 7; index += 3) { //goes through each row
     if (this.valueVector[index] === this.valueVector[index + 1] && this.valueVector[index] === this.valueVector[index + 2] && this.valueVector[index] != 0) {
-      winner = true;
+      winner = true; //there is a winner if one of the rows  is all the same
       winIndex = this.valueVector[index];
     }
   }
-  for (var index = 0; index < 3; index += 1) {
+  for (var index = 0; index < 3; index += 1) { //goes through all the columns
     if (this.valueVector[index] === this.valueVector[index + 3] && this.valueVector[index] === this.valueVector[index + 6] && this.valueVector[index] != 0) {
-      winner = true;
+      winner = true; //winner of a column is all the same
       winIndex = this.valueVector[index];
     }
   }
-  for (var index = 2; index < 5; index += 2) {
+  for (var index = 2; index < 5; index += 2) { //goes through the diagonals
     if (this.valueVector[4] === this.valueVector[4 + index] && this.valueVector[4] === this.valueVector[4 - index] && this.valueVector[4] != 0) {
-      winner = true;
+      winner = true; //winner if diagonals are the same
       winIndex = this.valueVector[index];
     }
   }
-  if (winner === true) {
-    this.winner = this.playerArray[winIndex-1].playerName + " " + "is the winner!";
+  if (winner === true) { //if someone won...
+    this.winner = this.playerArray[winIndex-1].playerName + " " + "is the winner!"; //display which player one
     this.winnerId = this.playerArray[winIndex-1].identifier;
-    if (this.onePlayer === true && this.winnerId === 2) {
-      this.computerPerfomance = 2;
+    if (this.onePlayer === true && this.winnerId === 2) { //if the computer won
+      this.computerPerfomance = 2; //give this location +2
     } else {
-      this.computerPerfomance = (-2);
+      this.computerPerfomance = (-2); //give this location -2
     }
   }
   return winner;
 }
 
+//checks for a tie
 Game.prototype.checkComplete = function () {
   var completeGame = true;
 
   for (var index = 0; index < 9; index++) {
-    if (this.valueVector[index] === 0) {
+    if (this.valueVector[index] === 0) { //if any of the spots are not taken yet game isn't over
       completeGame = false;
       break;
     }
   }
-  return completeGame
+  return completeGame //if they are all full then game is done
 };
 
+//checks to see if a game is over
 Game.prototype.checkOver = function () {
-  if (this.checkWin() === true) {
+  if (this.checkWin() === true) { //if someone won then the game is over
     return true;
-  } else if (this.checkComplete() === true) {
+  } else if (this.checkComplete() === true) { //if the game is tied the game is over
       this.computerPerfomance = 1;
       return true;
   } else {
@@ -132,38 +136,42 @@ Game.prototype.checkOver = function () {
   }
 };
 
+//adds total to the winners score and adds gameboard to array of all game boards
 Game.prototype.cleanUp = function() {
   for (var index = 0; index < this.playerArray.length; index++) {
-    if (this.winnerId === this.playerArray[index].identifier) {
+    if (this.winnerId === this.playerArray[index].identifier) { // adds 1 to the score of the winner
       this.playerArray[index].winsTotal += 1;
     }
   }
-  gamesArray.push([this.valueVector, this.computerPerfomance])
+  gamesArray.push([this.valueVector, this.computerPerfomance]) //adds game board to array of games
   similarArrays = [];
 }
 
+//inserts the chosen image to the chosen spot
 Game.prototype.imageInsert = function(imageId, targetId) {
-  $(targetId).append($(imageId).clone())
+  $(targetId).append($(imageId).clone()) //clones the image the player chose and appends it to a location
 }
 
+//sees if there are any similar games in the array of games
 Game.prototype.findSimilar = function(arrayOfArrays) {
   for (var arraysIterator = 0; arraysIterator < arrayOfArrays.length; arraysIterator++) {
     var same = true;
     for (var currentIndex = 0; currentIndex < this.valueVector.length; currentIndex++) {
       if (this.valueVector[currentIndex] != 0 && arrayOfArrays[arraysIterator][0][currentIndex] != this.valueVector[currentIndex]) {
-        same = false;
+        same = false; // games are not similar
       }
     }
     if (same === true) {
-      similarArrays.push(arrayOfArrays[arraysIterator])
+      similarArrays.push(arrayOfArrays[arraysIterator]) //if the game is similar then add it to the similar games array
     }
   }
 }
 
+//sees if there is a valid move to make (????)
 Game.prototype.evaluateMoves = function(similarArrays) {
   var evaluator = [0,0,0,0,0,0,0,0,0];
   for (var jdex = 0; jdex < this.valueVector.length; jdex++) {
-    if (this.valueVector[jdex] != 0) {
+    if (this.valueVector[jdex] != 0) { //if the spot has already been taken then an x is added to the evaluator array
       evaluator[jdex] = ('X');
     }
   }
@@ -177,6 +185,7 @@ Game.prototype.evaluateMoves = function(similarArrays) {
   return evaluator;
 }
 
+//finds best move
 Game.prototype.bestMove = function(evaluator) {
   var bestPositionValue = (-10000);
   var moveChoices = []
@@ -195,64 +204,65 @@ Game.prototype.bestMove = function(evaluator) {
   return moveChoices[bestMove];
 }
 
-$(document).ready(function() {
-  var player1Image = $("#x");
-  var player2Image = $("#robot");
 
-  $(".player-1-image").click(function() {
+$(document).ready(function() {
+  var player1Image = $("#x"); //sets default value of player image to x
+  var player2Image = $("#robot");//sets default value of computer image to robot
+
+  $(".player-1-image").click(function() { //when player 1 is selecting an image
     $(this).siblings().removeClass("highlight");
-    $(this).addClass("highlight");
-    player1Image = $(this);
+    $(this).addClass("highlight"); //the clicked on immage is highlighted
+    player1Image = $(this); //this becomes player ones image
   })
-  $(".player-2-image").click(function() {
+  $(".player-2-image").click(function() { //same as above for player 2
     $(this).siblings().removeClass("highlight");
     $(this).addClass("highlight");
     player2Image = $(this);
   })
 
   $(".player-numbers").click(function() {
-    var playerChoice = $(this).attr('id');
-    $(".players-landing-page").hide();
-    $("#name-players").show();
-    if (playerChoice === "one-player") {
-      $(".player2-hidden").hide();
-      onePlayer = true;
+    var playerChoice = $(this).attr('id'); //gets id of the button that was selected - one player or 2 players
+    $(".players-landing-page").hide(); //hids the landing page
+    $("#name-players").show(); //displays page where player(s) can put in their name and select their image
+    if (playerChoice === "one-player") { //if button for one player was clicked (identified by the id equal to one player)
+      $(".player2-hidden").hide(); //hide the section for the second player to enter name and click image
+      onePlayer = true; //set one player to true
     }
   })
 
-  $("#get-names").submit(function(event) {
+  $("#get-names").submit(function(event) { //when name(s) are submitted
     event.preventDefault();
 
     $("#x").empty();
-    player1Image = player1Image.clone()
+    player1Image = player1Image.clone() //chosen image becomes the players image
     player1Image.removeClass("symbol-pic highlight");
     player1Image.addClass("symbol");
     $("#x").append(player1Image);
 
     $("#o").empty();
-    player2Image = player2Image.clone()
+    player2Image = player2Image.clone() //chosen image becomes the players image
     player2Image.removeClass("symbol-pic highlight");
     player2Image.addClass("symbol");
     $("#o").append(player2Image);
 
-    $(".entire-game").show();
-    $(".landing-page").hide();
-    var player1 = new Player($("#player-1").val(), 1);
-    var player2 = new Player($("#player-2").val(), 2);
-    var computerPlayer = new Player("Computer", 2);
-    computerPlayer.humanPlayer = false;
-    var game1 = new Game(player1, player2, onePlayer, computerPlayer);
-    game1.onePlayerSetup();
+    $(".entire-game").show(); //displays boardgame
+    $(".landing-page").hide(); //hides name/pic page
+    var player1 = new Player($("#player-1").val(), 1); //new object created with inputted name and player1 identifier
+    var player2 = new Player($("#player-2").val(), 2); //new object created with inputted name and player2 identifier
+    var computerPlayer = new Player("Computer", 2); //new computer player object created
+    computerPlayer.humanPlayer = false; //sets human player to false for the computer player object
+    var game1 = new Game(player1, player2, onePlayer, computerPlayer); //new game object
+    game1.onePlayerSetup(); //runs function to remove player 2 from array of players so that one person and the computer can play
     currentGame = game1;
 
     $(".position").click(function() {
       similarArrays = [];
 
-      var currentDiv = $(this);
-      var vectorIndex = parseInt(currentDiv.attr('id'));
-      if (currentGame.valueVector[vectorIndex] === 0 && currentGame.gameState === true) {
-        if (currentGame.playerState === 0 && currentGame.onePlayer === true) {
-          currentGame.imageInsert("#x", $(this));
+      var currentDiv = $(this); //chooses the selected div
+      var vectorIndex = parseInt(currentDiv.attr('id')); //gets the location of the selected div by referring to it's id value
+      if (currentGame.valueVector[vectorIndex] === 0 && currentGame.gameState === true) { //if the div has not yet been selected and the game is still going on...
+        if (currentGame.playerState === 0 && currentGame.onePlayer === true) { //if it is the humans turn and only one player...
+          currentGame.imageInsert("#x", $(this)); //
           currentGame.valueVector[vectorIndex] = currentGame.playerState+1;
           if (currentGame.checkOver() === false) {
             currentGame.findSimilar(gamesArray);
