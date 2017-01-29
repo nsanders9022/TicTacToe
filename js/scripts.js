@@ -13,15 +13,15 @@ function Game(player1, player2, onePlayer, computerPlayer) {
   this.playerArray.push(player1, player2, computerPlayer); // adds players to the player array
   this.currentPlayer = playerArray[this.playerState] //gets index of the current player in the player array
   this.winner = "It's a tie"; // default text when the game is over
-  this.winnerId;
+  this.winnerId; //id of which player won
   this.computerPerfomance;
   this.onePlayer = onePlayer; //property to see if one person is playing
 }
 
 // Player constructor
 function Player(playerName, identifier) {
-  this.playerName = playerName;
-  this.identifier = identifier;
+  this.playerName = playerName; //player's names
+  this.identifier = identifier; //player id. 0 for player 1, 1 for player 2
   playerArray.push(this); //adds the entire player object into the player array
   this.winsTotal = 0; //default to 0 wins
   this.humanPlayer = true; //default to being a human player
@@ -31,7 +31,7 @@ function Player(playerName, identifier) {
 Game.prototype.randomNumber = function() {
   var computerMove = Math.floor(Math.random()*9); //gets random number between 0 and 8
   while (this.valueVector[computerMove] != 0) { //while the square (identified by the random number as the index for the valueVector) is not available (??)
-    computerMove = Math.floor(Math.random()*9); //the computer plays there
+    computerMove = Math.floor(Math.random()*9); //the computer chooses another spot
   }
   return computerMove;
 };
@@ -132,7 +132,7 @@ Game.prototype.checkOver = function () {
       this.computerPerfomance = 1;
       return true;
   } else {
-    return this.checkComplete();
+    return this.checkComplete(); //else check again to see if the board is complete
   }
 };
 
