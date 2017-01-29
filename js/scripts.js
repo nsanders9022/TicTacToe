@@ -262,44 +262,44 @@ $(document).ready(function() {
       var vectorIndex = parseInt(currentDiv.attr('id')); //gets the location of the selected div by referring to it's id value
       if (currentGame.valueVector[vectorIndex] === 0 && currentGame.gameState === true) { //if the div has not yet been selected and the game is still going on...
         if (currentGame.playerState === 0 && currentGame.onePlayer === true) { //if it is the humans turn and only one player...
-          currentGame.imageInsert("#x", $(this)); //
-          currentGame.valueVector[vectorIndex] = currentGame.playerState+1;
-          if (currentGame.checkOver() === false) {
-            currentGame.findSimilar(gamesArray);
-            var eval = currentGame.evaluateMoves(similarArrays);
-            var computerMove = currentGame.bestMove(eval);
+          currentGame.imageInsert("#x", $(this)); //insert the player's chosen image to the div
+          currentGame.valueVector[vectorIndex] = currentGame.playerState+1; //switch players to make it the next person's turn
+          if (currentGame.checkOver() === false) { //if the game isn't over yet
+            currentGame.findSimilar(gamesArray); //the computer looks at the similar games in the game array
+            var eval = currentGame.evaluateMoves(similarArrays); //and evaluates its moves
+            var computerMove = currentGame.bestMove(eval); //plays the best move
             console.log(eval);
-            currentGame.imageInsert("#o", "#" + computerMove);
-            currentGame.valueVector[computerMove] = 2;
+            currentGame.imageInsert("#o", "#" + computerMove); //inserts the image to the chosen div
+            currentGame.valueVector[computerMove] = 2; //adds a 2 to the location in the value vector that the computer played
           }
-        } else if (currentGame.playerState === 0) {
-          currentGame.imageInsert("#x", $(this));
-          currentGame.valueVector[vectorIndex] = currentGame.playerState+1;
+        } else if (currentGame.playerState === 0) { //if the location has not been taken yet and there are two human players
+          currentGame.imageInsert("#x", $(this)); //insert image from player one
+          currentGame.valueVector[vectorIndex] = currentGame.playerState+1; //changes to the next player's turn
           currentGame.stateSwitch();
         } else {
-          currentGame.imageInsert("#o", $(this));
+          currentGame.imageInsert("#o", $(this)); //puts player 2s image in
           currentGame.valueVector[vectorIndex] = currentGame.playerState+1;
-          currentGame.stateSwitch();
+          currentGame.stateSwitch(); //changes back to player 1
         }
-        if (currentGame.checkOver() === true){
-          currentGame.cleanUp();
-          $("#game-over-text").text(currentGame.winner);
-          currentGame.gameState = false;
+        if (currentGame.checkOver() === true){ //if the game is over
+          currentGame.cleanUp(); //add 1 to winners score and adds game to the array of games
+          $("#game-over-text").text(currentGame.winner); //displays the winners name, or it's a tie
+          currentGame.gameState = false; //make the game over
           $("#game-over").show();
-          $("#player-1-name").text(currentGame.playerArray[0].playerName);
-          $("#player-1-wins").text(currentGame.playerArray[0].winsTotal);
-          $("#player-2-name").text(currentGame.playerArray[1].playerName);
-          $("#player-2-wins").text(currentGame.playerArray[1].winsTotal);
+          $("#player-1-name").text(currentGame.playerArray[0].playerName); //displays player1s name
+          $("#player-1-wins").text(currentGame.playerArray[0].winsTotal); //displays player1s total wins
+          $("#player-2-name").text(currentGame.playerArray[1].playerName); //displays player2s name
+          $("#player-2-wins").text(currentGame.playerArray[1].winsTotal); //displays player2s total wins
         }
       }
     })
 
-    $(".replay").click(function(){
-      var newGame = new Game(player1, player2, onePlayer, computerPlayer);
-      newGame.onePlayerSetup();
+    $(".replay").click(function(){ //when the player wants to play again
+      var newGame = new Game(player1, player2, onePlayer, computerPlayer); //a new game object is created
+      newGame.onePlayerSetup(); //the game is set up
       currentGame = newGame;
-      $("#game-over").hide();
-      $(".entire-game").find(".position").empty();
+      $("#game-over").hide(); //the winning name and scores page is hidden
+      $(".entire-game").find(".position").empty(); //all of the position divs with images are emptied
     })
   })
 
